@@ -131,7 +131,7 @@ DEFAULT_COLOR="\[\033[00m\]"
 BOLD=$(tput bold)
 
 # See: https://github.com/magicmonty/bash-git-prompt
-__GIT_PROMPT_DIR=~/.bash
+__GIT_PROMPT_DIR=~/.git_prompt
 GIT_PROMPT_PREFIX=":$PURPLE"
 GIT_PROMPT_SUFFIX="$GREEN"
 GIT_PROMPT_SEPARATOR="|"
@@ -208,8 +208,8 @@ PROMPT_COMMAND=myPrompt
 
 [ -s "/home/msiemens/.scm_breeze/scm_breeze.sh" ] && source "/home/msiemens/.scm_breeze/scm_breeze.sh"
 
-export GIT_REPO_DIR=/home/msiemens/Coding
-export PYTHONSTARTUP=/home/msiemens/.pystartup
+export GIT_REPO_DIR=$HOME/Coding
+export PYTHONSTARTUP=$HOME/.pystartup
 
 source $HOME/.ssh/setup.sh
 
