@@ -1,0 +1,9 @@
+Host stud.uni
+# Next, enter the full url to the server you want to log into for the last time! Here we use miles, but it can be any server you'd like to access
+# such as hoffman2.idre.ucla.edu for hoffman
+  Hostname campus-linux.rrzn.uni-hannover.de
+# Then enter the user name needed to log into this host. foo is just an example, your username is specific to your account
+  User  0ng-1qh
+# You don't want to get logged out automatically just because you aren't always doing something, so tell the server you'd like it to keep it alive.
+# The numerical argument you give here is how often (in seconds) a ping should be sent to keep the connection open.
+  ServerAliveInterval 300
