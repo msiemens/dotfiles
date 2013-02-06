@@ -5,13 +5,30 @@
 source install/setup.sh
 source install/config.sh
 
+task "Installing dotfiles.py"
+
+# Check, if dotfiles is already installed
+pip freeze | grep dotfiles &> /dev/null
+
+if [[ $? -ne 0 ]]; then
+    pip install dotfiles &> /dev/null
+
+    pip freeze | grep dotfiles &> /dev/null
+    if [[ $? -ne 0 ]]; then
+        error "Could not install dotfiles.py. Please run 'pip install dotfiles' manually."
+    fi
+else
+    success "Already installed"
+fi
+
+# Setup dotfiles
 task "Setting up dotfiles"
 
 if [[ ! -d $HOME/.dotfiles ]]; then
     log_file="/tmp/dotfiles.log"
 
     # Clone repo
-    git clone $DOTFILES_REPO $DOTFILES_PATH
+    git clone -q $DOTFILES_REPO $DOTFILES_PATH
 
     # Do backup
     files_to_be_replaced=$(cat $DOTFILES_PATH/dotfilesrc | grep ignore | grep -Po "'(.*?)'" | sed -E "s/'([^']+)'.*/\\1/")
@@ -22,7 +39,7 @@ if [[ ! -d $HOME/.dotfiles ]]; then
     done
 
     # Setup dotfiles
-    dotfiles -s -f -C .dotfiles/dotfilesrc 2> $log_file
+    dotfiles -s -f -C ~/.dotfiles/dotfilesrc 2> $log_file
     if [[ $? -ne 0 ]]; then
         error $(cat $log_file)
     fi
