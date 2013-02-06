@@ -11,6 +11,9 @@ HISTCONTROL=$HISTCONTROL${HISTCONTROL+:}ignoredups
 # ... or force ignoredups and ignorespace
 HISTCONTROL=ignoreboth
 
+# append to the history file, don't overwrite it
+shopt -s histappend
+
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 
 # check the window size after each command and, if necessary,
@@ -24,6 +27,7 @@ shopt -s checkwinsize
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -36,7 +40,7 @@ esac
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-  # We have color support; assume it's compliant with Ecma-48
+	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 	# a case would tend to support setf rather than setaf.)
 	color_prompt=yes
@@ -44,6 +48,13 @@ if [ -n "$force_color_prompt" ]; then
 	color_prompt=
     fi
 fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -117,23 +128,91 @@ YELLOW="\[\033[1;33m\]"
 WHITE="\[\033[1;37m\]"
 DEFAULT_COLOR="\[\033[00m\]"
 
-export PS1="\`if [ \$? = 0 ];
-    then
-        echo -e '$GREEN--( $DARK_GRAY\u$GREEN )--( $YELLOW\w$GREEN )-- :)\n--\$$DEFAULT_COLOR ';
-    else
-        echo -e '$LIGHT_RED--( $DARK_GRAY\u$LIGHT_RED )--( $YELLOW\w$LIGHT_RED )-- :(\n--\$$DEFAULT_COLOR ';
-    fi; \`"
+BOLD=$(tput bold)
+
+# See: https://github.com/magicmonty/bash-git-prompt
+__GIT_PROMPT_DIR=~/.bash
+GIT_PROMPT_PREFIX=":$PURPLE"
+GIT_PROMPT_SUFFIX="$GREEN"
+GIT_PROMPT_SEPARATOR="|"
+GIT_PROMPT_BRANCH="${PURPLE}"
+GIT_PROMPT_STAGED="${BOLD}${RED}● "
+GIT_PROMPT_CONFLICTS="${BOLD}${RED}✖ "
+GIT_PROMPT_CHANGED="${BOLD}${BLUE}✚ "
+GIT_PROMPT_REMOTE="${BOLD} "
+GIT_PROMPT_UNTRACKED="…"
+GIT_PROMPT_CLEAN="${BOLD}${GREEN}✔"
+
+function update_current_git_vars() {
+    unset __CURRENT_GIT_STATUS
+    local gitstatus="${__GIT_PROMPT_DIR}/gitstatus.py"
+    
+    _GIT_STATUS=$(python $gitstatus)
+    __CURRENT_GIT_STATUS=($_GIT_STATUS)
+	GIT_BRANCH=${__CURRENT_GIT_STATUS[0]}
+	GIT_REMOTE=${__CURRENT_GIT_STATUS[1]}
+    if [[ "." == "$GIT_REMOTE" ]]; then
+		unset GIT_REMOTE
+	fi
+	GIT_STAGED=${__CURRENT_GIT_STATUS[2]}
+	GIT_CONFLICTS=${__CURRENT_GIT_STATUS[3]}
+	GIT_CHANGED=${__CURRENT_GIT_STATUS[4]}
+	GIT_UNTRACKED=${__CURRENT_GIT_STATUS[5]}
+	GIT_CLEAN=${__CURRENT_GIT_STATUS[6]}
+}
+
+function myPrompt() {
+	history -a; history -n;
+
+	update_current_git_vars
+
+	if [ -n "$__CURRENT_GIT_STATUS" ]; then
+	  STATUS="$GIT_PROMPT_PREFIX$GIT_PROMPT_BRANCH$GIT_BRANCH$DEFAULT_COLOR"
+
+	  if [ -n "$GIT_REMOTE" ]; then
+		  STATUS="$STATUS$GIT_PROMPT_REMOTE$GIT_REMOTE$DEFAULT_COLOR"
+	  fi
+
+	  STATUS="$STATUS$GIT_PROMPT_SEPARATOR"
+	  if [ "$GIT_STAGED" -ne "0" ]; then
+		  STATUS="$STATUS$GIT_PROMPT_STAGED$GIT_STAGED$DEFAULT_COLOR"
+	  fi
+
+	  if [ "$GIT_CONFLICTS" -ne "0" ]; then
+		  STATUS="$STATUS$GIT_PROMPT_CONFLICTS$GIT_CONFLICTS$DEFAULT_COLOR"
+	  fi
+	  if [ "$GIT_CHANGED" -ne "0" ]; then
+		  STATUS="$STATUS$GIT_PROMPT_CHANGED$GIT_CHANGED$DEFAULT_COLOR"
+	  fi
+	  if [ "$GIT_UNTRACKED" -ne "0" ]; then
+		  STATUS="$STATUS$GIT_PROMPT_UNTRACKED$GIT_UNTRACKED$DEFAULT_COLOR"
+	  fi
+	  if [ "$GIT_CLEAN" -eq "1" ]; then
+		  STATUS="$STATUS$GIT_PROMPT_CLEAN"
+	  fi
+	  STATUS="$DEFAULT_COLOR$STATUS$GIT_PROMPT_SUFFIX"
+	else
+	  STATUS=""
+	fi
+
+	PS1="\`if [ \$? = 0 ];
+	    then
+		echo -e '$GREEN--( $DARK_GRAY\u$GREEN )--( $YELLOW\w$STATUS )-- :)\n--\$$DEFAULT_COLOR ';
+	    else
+		echo -e '$LIGHT_RED--( $DARK_GRAY\u$LIGHT_RED )--( $YELLOW\w$LIGHT_RED$STATUS )-- :(\n--\$$DEFAULT_COLOR ';
+	    fi; \`"
+}
+
+PROMPT_COMMAND=myPrompt
 
 
+[ -s "/home/msiemens/.scm_breeze/scm_breeze.sh" ] && source "/home/msiemens/.scm_breeze/scm_breeze.sh"
 
-[ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
+export GIT_REPO_DIR=/home/msiemens/Coding
+export PYTHONSTARTUP=/home/msiemens/.pystartup
 
-export GIT_REPO_DIR=$HOME/Coding
-export PYTHONSTARTUP=$HOME/.pystartup
-
-[ -s "$HOME/.ssh/setup.sh" ] && source "$HOME/.ssh/setup.sh"
+source $HOME/.ssh/setup.sh
 
 
 # http://superuser.com/questions/37576/can-history-files-be-unified-in-bash
 shopt -s histappend
-PROMPT_COMMAND="history -a; history -n"
