@@ -206,7 +206,7 @@ function myPrompt() {
 PROMPT_COMMAND=myPrompt
 
 
-[ -s "/home/msiemens/.scm_breeze/scm_breeze.sh" ] && source "/home/msiemens/.scm_breeze/scm_breeze.sh"
+[ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
 
 export GIT_REPO_DIR=$HOME/Coding
 export PYTHONSTARTUP=$HOME/.pystartup
