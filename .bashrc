@@ -197,9 +197,9 @@ function myPrompt() {
 
 	PS1="\`if [ \$? = 0 ];
 	    then
-		echo -e '$GREEN--( $DARK_GRAY\u$GREEN )--( $YELLOW\w$STATUS )-- :)\n--\$$DEFAULT_COLOR ';
+		echo -e '$GREEN--( $DARK_GRAY\u$GREEN )--( $YELLOW\w$STATUS$GREEN )-- :)\n--\$$DEFAULT_COLOR ';
 	    else
-		echo -e '$LIGHT_RED--( $DARK_GRAY\u$LIGHT_RED )--( $YELLOW\w$LIGHT_RED$STATUS )-- :(\n--\$$DEFAULT_COLOR ';
+		echo -e '$LIGHT_RED--( $DARK_GRAY\u$LIGHT_RED )--( $YELLOW\w$LIGHT_RED$STATUS$GREEN )-- :(\n--\$$DEFAULT_COLOR ';
 	    fi; \`"
 }
 
