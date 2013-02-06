@@ -7,14 +7,34 @@ source install/config.sh
 
 task "Setting up dotfiles"
 
-# if [[ ! -d $HOME/.dotfiles ]]; then
+if [[ ! -d $HOME/.dotfiles ]]; then
+    log_file="/tmp/dotfiles.log"
+
     # Clone repo
-    # For every file:
-    #   Do backup
-    # Run dotfiles -s -f -C .dotfiles/dotfilesrc
-# else
-    # Check, if repo is correct
-    #   true: nothing to do
-    #   false: other dotfiles already installed!
-# fi
-success "Dummy"
+    git clone $DOTFILES_REPO $DOTFILES_PATH
+
+    # Do backup
+    files_to_be_replaced=$(cat $DOTFILES_PATH/dotfilesrc | grep ignore | grep -Po "'(.*?)'" | sed -E "s/'([^']+)'.*/\\1/")
+    mkdir $DOTFILES_PATH/backup/
+
+    for file in $files_to_be_replaced; do
+        cp -r $files_to_be_replaced $DOTFILES_PATH/backup/$files_to_be_replaced 2> /dev/null
+    done
+
+    # Setup dotfiles
+    dotfiles -s -f -C .dotfiles/dotfilesrc 2> $log_file
+    if [[ $? -ne 0 ]]; then
+        error $(cat $log_file)
+    fi
+    success
+else
+    cd $DOTFILES_PATH
+    git remote -v | grep $DOTFILES_REPO &> /dev/null  # Check, if remote is correct
+
+    if [[ $? -ne 0 ]]; then
+        error "${COLOR_RED}${FONT_BOLD}3rd party dotfiles found!${FONT_DEFAULT}${COLOR_DEFAULT}
+Exiting to prevent overwriting the old environment"
+    else
+        success "Already installed"
+    fi
+fi
