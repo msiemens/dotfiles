@@ -1,7 +1,5 @@
-" Enable pathogen
-filetype off
-call pathogen#runtime_append_all_bundles()
-filetype plugin indent on
+" Syntax on
+syntax on
 
 " Remove vi compatibility
 set nocompatible
