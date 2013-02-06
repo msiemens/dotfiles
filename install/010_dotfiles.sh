@@ -5,15 +5,16 @@
 source install/setup.sh
 source install/config.sh
 
-if [[ ! -d $HOME/.dotfiles ]]; then
+task "Setting up dotfiles"
+
+# if [[ ! -d $HOME/.dotfiles ]]; then
     # Clone repo
     # For every file:
     #   Do backup
     # Run dotfiles -s -f -C .dotfiles/dotfilesrc
-    echo "pass"
-else
+# else
     # Check, if repo is correct
     #   true: nothing to do
     #   false: other dotfiles already installed!
-    echo "pass"
-fi
+# fi
+success "Dummy"

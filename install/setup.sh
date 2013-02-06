@@ -64,7 +64,13 @@ function task {
 }
 
 function success {
-    e "[${COLOR_GREEN}Okay${COLOR_DEFAULT}]"
+    state="Okay"
+
+    if [[ $# -eq 1 ]]; then
+        state=$1
+    fi
+
+    e "[${COLOR_GREEN}${state}${COLOR_DEFAULT}]"
 }
 
 function error {
