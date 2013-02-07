@@ -23,48 +23,6 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 #[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
-
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -146,7 +104,7 @@ GIT_PROMPT_CLEAN="${BOLD}${GREEN}✔"
 function update_current_git_vars() {
     unset __CURRENT_GIT_STATUS
     local gitstatus="${__GIT_PROMPT_DIR}/gitstatus.py"
-    
+
     _GIT_STATUS=$(python $gitstatus)
     __CURRENT_GIT_STATUS=($_GIT_STATUS)
 	GIT_BRANCH=${__CURRENT_GIT_STATUS[0]}
@@ -216,3 +174,19 @@ source $HOME/.ssh/setup.sh
 
 # http://superuser.com/questions/37576/can-history-files-be-unified-in-bash
 shopt -s histappend
+
+
+# Auto-screen invocation. see: http://taint.org/wk/RemoteLoginAutoScreen
+# if we're coming from a remote SSH connection, in an interactive session
+# then automatically put us into a screen(1) session.   Only try once
+# -- if $STARTED_SCREEN is set, don't try it again, to avoid looping
+# if screen fails for some reason.
+
+if [ "$PS1" != "" -a "$TERM" != "screen" -a "${STARTED_SCREEN:-x}" = x -a "${SSH_TTY:-x}" != x ]; then
+    STARTED_SCREEN=1 ; export STARTED_SCREEN
+    [ -d $HOME/lib/screen-logs ] || mkdir -p $HOME/lib/screen-logs
+    sleep 1
+    screen -RR && exit 0
+    # normally, execution of this rc script ends here...
+    echo "Screen failed! continuing with normal bash startup"
+fi
