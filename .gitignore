@@ -1,3 +1,5 @@
 ssh/environment*
 ssh/id_*
 ssh/known_hosts
+
+*.swp

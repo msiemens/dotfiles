@@ -177,6 +177,8 @@ source $HOME/.ssh/setup.sh
 shopt -s histappend
 
 
+
+
 # Auto-screen invocation. see: http://taint.org/wk/RemoteLoginAutoScreen
 # if we're coming from a remote SSH connection, in an interactive session
 # then automatically put us into a screen(1) session.   Only try once
@@ -184,6 +186,11 @@ shopt -s histappend
 # if screen fails for some reason.
 
 if [ "$PS1" != "" -a "$TERM" != "screen" -a "${STARTED_SCREEN:-x}" = x -a "${SSH_TTY:-x}" != x ]; then
+    xtitle ()
+    {
+        echo -ne "\ek$1\e\\"
+    }
+
     STARTED_SCREEN=1 ; export STARTED_SCREEN
     [ -d $HOME/lib/screen-logs ] || mkdir -p $HOME/lib/screen-logs
     sleep 1
