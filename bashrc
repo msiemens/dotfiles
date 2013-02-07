@@ -166,6 +166,7 @@ PROMPT_COMMAND=myPrompt
 
 [ -s "$HOME/.scm_breeze/scm_breeze.sh" ] && source "$HOME/.scm_breeze/scm_breeze.sh"
 
+export LANG=C
 export GIT_REPO_DIR=$HOME/Coding
 export PYTHONSTARTUP=$HOME/.pystartup
 
