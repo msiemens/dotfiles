@@ -18,5 +18,3 @@ fi
 
 # set PATH so it includes user's private bin if it exists
 export PATH="$HOME/Apps:$PATH"
-
-source $HOME/.ssh/setup.sh
