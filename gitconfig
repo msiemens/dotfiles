@@ -1,12 +1,20 @@
+[include]
+    path = .gitconfig.local
+
 [user]
     name = Markus Siemens
     email = markus@m-siemens.de
+
 [alias]
     hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
     lg = log --graph --pretty=format:\"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset\" --abbrev-commit
+
 [color]
     ui = true
     branch = auto
     diff = auto
     interactive = auto
     status = auto
+
+[git-up "rebase"]
+    arguments = --preserve-merges
