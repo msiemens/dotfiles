@@ -153,11 +153,18 @@ function myPrompt() {
 	  STATUS=""
 	fi
 
+    VENV_NAME=$(basename "$VIRTUAL_ENV" | tr -d ' ')
+    if [ -n "$VENV_NAME" ]; then
+      VENV=" [${VENV_NAME}]"
+    else
+      VENV=""
+    fi
+
 	PS1="\`if [ \$? = 0 ];
 	    then
-		echo -e '$GREEN--( $DARK_GRAY\u$GREEN )--( $YELLOW\w$STATUS$GREEN )-- :)\n--\$$DEFAULT_COLOR ';
+		echo -e '$GREEN--( $DARK_GRAY\u$GREEN )--($DARK_GRAY$VENV $YELLOW\w$STATUS$GREEN )-- :)\n--\$$DEFAULT_COLOR ';
 	    else
-		echo -e '$LIGHT_RED--( $DARK_GRAY\u$LIGHT_RED )--( $YELLOW\w$LIGHT_RED$STATUS$LIGHT_RED )-- :(\n--\$$DEFAULT_COLOR ';
+		echo -e '$LIGHT_RED--( $DARK_GRAY\u$LIGHT_RED )--($DARK_GRAY$VENV $YELLOW\w$LIGHT_RED$STATUS$LIGHT_RED )-- :(\n--\$$DEFAULT_COLOR ';
 	    fi; \`"
 }
 

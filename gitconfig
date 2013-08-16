@@ -3,7 +3,7 @@
 
 [user]
     name = Markus Siemens
-    email = markus@m-siemens.de
+    email = msi@axxeo.de
 
 [alias]
     hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
@@ -18,3 +18,5 @@
 
 [git-up "rebase"]
     arguments = --preserve-merges
+[credential]
+	helper = cache --timeout=300
