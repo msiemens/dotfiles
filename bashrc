@@ -120,7 +120,7 @@ function update_current_git_vars() {
 }
 
 function myPrompt() {
-	history -a; history -n;
+	history -a; # history -n;
 
 	update_current_git_vars
 
