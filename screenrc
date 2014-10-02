@@ -41,3 +41,8 @@ bindkey -k k8 quit
 bindkey "^[[27;5;9~" next
 # Ctrl-Shift-Tab
 bindkey "^[[27;6;9~" prev
+
+
+# Enable UTF8
+defutf8 on
+utf8 on on

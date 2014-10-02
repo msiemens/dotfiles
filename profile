@@ -18,3 +18,7 @@ fi
 
 # set PATH so it includes user's private bin if it exists
 export PATH="$HOME/Apps:$PATH"
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
