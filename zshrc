@@ -82,4 +82,6 @@ source $ZSH/oh-my-zsh.sh
 
 DEFAULT_USER="markus"
 
+zstyle ':omz:module:screen' auto-start 'yes'
+
 [ -s "/home/markus/.scm_breeze/scm_breeze.sh" ] && source "/home/markus/.scm_breeze/scm_breeze.sh"
