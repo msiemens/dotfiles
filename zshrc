@@ -45,7 +45,7 @@ ZSH_THEME="avit"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git rust)
+plugins=(git rust screen)
 
 # User configuration
 
@@ -82,6 +82,21 @@ source $ZSH/oh-my-zsh.sh
 
 DEFAULT_USER="markus"
 
-zstyle ':omz:module:screen' auto-start 'yes'
-
 [ -s "/home/markus/.scm_breeze/scm_breeze.sh" ] && source "/home/markus/.scm_breeze/scm_breeze.sh"
+
+
+
+# Auto-screen invocation. see: http://taint.org/wk/RemoteLoginAutoScreen
+# if we're coming from a remote SSH connection, in an interactive session
+# then automatically put us into a screen(1) session.   Only try once
+# -- if $STARTED_SCREEN is set, don't try it again, to avoid looping
+# if screen fails for some reason.
+
+if [ "$PS1" != "" -a "$TERM" != "screen" -a "${STARTED_SCREEN:-x}" = x -a "${SSH_TTY:-x}" != x ]; then
+    STARTED_SCREEN=1 ; export STARTED_SCREEN
+    [ -d $HOME/.screen-logs ] || mkdir -p $HOME/.screen-logs
+    sleep 1
+    screen -URd && exit 0
+    # normally, execution of this rc script ends here...
+    echo "Screen failed! continuing with normal bash startup"
+fi
