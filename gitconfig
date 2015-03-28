@@ -21,3 +21,5 @@
     arguments = --preserve-merges
 [credential]
 	helper = cache --timeout=300
+[push]
+	default = simple
