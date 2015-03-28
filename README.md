@@ -2,6 +2,7 @@
 
 This is my personal collection of dotfiles. Nothing fancy yet, but I like it.
 This is, what it looks like (bash + screen):
+
 ![Screenshot](http://i.imgur.com/j1B5GfT.png)
 
 ## What's inside?
